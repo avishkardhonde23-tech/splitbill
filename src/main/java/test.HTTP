@@ -1,0 +1,31 @@
+POST http://localhost:8080/api/users/register
+Content-Type: application/json
+
+{
+  "name":"Avishkar",
+  "email":"avishkar1@gmail.com",
+  "password":"12345"
+}
+###
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email":"avishkar@gmail.com",
+  "password":"12345"
+}
+###
+POST http://localhost:8080/api/groups
+Content-Type: application/json
+
+{
+  "groupName": "Goa Trip"
+}
+###
+POST http://localhost:8080/api/group-members
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "groupId": 1
+}
