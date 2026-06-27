@@ -3,10 +3,9 @@ package com.example.splitbill.controller;
 import com.example.splitbill.entity.GroupMember;
 import com.example.splitbill.service.GroupMemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/group-members")
@@ -19,5 +18,9 @@ public class GroupMemberController {
             @RequestBody GroupMember member){
 
         return service.addMember(member);
+    }
+    @GetMapping("/{groupId}")
+    public List<GroupMember> getMembers(@PathVariable Long groupId) {
+        return service.getMembers(groupId);
     }
 }

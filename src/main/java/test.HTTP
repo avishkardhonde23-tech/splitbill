@@ -2,9 +2,9 @@ POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "name":"Avishkar",
-  "email":"avishkar1@gmail.com",
-  "password":"12345"
+  "name": "Rahul",
+  "email": "rahul@gmail.com",
+  "password": "12345"
 }
 ###
 POST http://localhost:8080/api/users/login
@@ -26,6 +26,127 @@ POST http://localhost:8080/api/group-members
 Content-Type: application/json
 
 {
-  "userId": 1,
+  "userId": 2,
   "groupId": 1
+}
+###
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+
+{
+  "groupId":1,
+  "paidBy":1,
+  "amount":8000,
+  "description":"Lunch",
+  "splitType": "EQUAL"
+}
+###
+POST http://localhost:8080/api/splits
+Content-Type: application/json
+
+{
+  "expenseId": 1,
+  "userId": 1,
+  "amountOwed": 2500
+}
+###
+GET http://localhost:8080/api/expenses/group/2
+###
+GET http://localhost:8080/api/splits/expense/3
+###
+GET http://localhost:8080/api/group-members/1
+###
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+
+{
+  "groupId": 1,
+  "paidBy": 1,
+  "amount": 6000,
+  "description": "Dinner Exact",
+  "splitType": "EXACT",
+  "splits": [
+    {
+      "userId": 1,
+      "amount": 4000
+    },
+    {
+      "userId": 2,
+      "amount": 2000
+    }
+  ]
+}
+###
+GET http://localhost:8080/api/splits/expense/3
+###
+###
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+
+{
+  "groupId": 1,
+  "paidBy": 1,
+  "amount": 900,
+  "description": "Restaurant",
+  "splitType": "ITEM_WISE",
+
+  "items": [
+    {
+      "itemName": "Burger",
+      "price": 300,
+      "userIds": [1]
+    },
+    {
+      "itemName": "Pizza",
+      "price": 400,
+      "userIds": [2]
+    },
+    {
+      "itemName": "Fries",
+      "price": 200,
+      "userIds": [1,2]
+    }
+  ]
+}
+###
+###
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+
+{
+  "groupId": 1,
+  "paidBy": 1,
+  "amount": 900,
+  "description": "Restaurant",
+  "splitType": "ITEM_WISE",
+
+  "items": [
+    {
+      "itemName": "Burger",
+      "price": 300,
+      "userIds": [1]
+    },
+    {
+      "itemName": "Pizza",
+      "price": 400,
+      "userIds": [2]
+    },
+    {
+      "itemName": "Fries",
+      "price": 200,
+      "userIds": [1,2]
+    }
+  ]
+}
+###
+GET http://localhost:8080/api/splits/balance/1
+###
+###
+POST http://localhost:8080/api/splits/settle
+Content-Type: application/json
+
+{
+  "fromUserId": 2,
+  "toUserId": 1,
+  "amount": 500
 }
