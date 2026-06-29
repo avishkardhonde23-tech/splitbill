@@ -6,6 +6,7 @@ import com.example.splitbill.entity.ExpenseSplitEntity;
 import com.example.splitbill.entity.GroupMember;
 import com.example.splitbill.repository.ExpenseSplitRepository;
 import com.example.splitbill.repository.GroupMemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +53,7 @@ public class ExpenseSplitService {
 
         return balances;
     }
+    @Transactional
     public void settle(SettleRequest request) {
 
         List<ExpenseSplitEntity> splits = repository.findByUserId(request.getFromUserId());

@@ -9,6 +9,7 @@ import com.example.splitbill.entity.GroupMember;
 import com.example.splitbill.repository.ExpenseRepository;
 import com.example.splitbill.repository.ExpenseSplitRepository;
 import com.example.splitbill.repository.GroupMemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final ExpenseSplitRepository expenseSplitRepository;
-
+@Transactional
     public ExpenseEntity addExpense(ExpenseRequest request) {
         ExpenseEntity expense = new ExpenseEntity();
 
@@ -126,5 +127,23 @@ public class ExpenseService {
                 expenseSplitRepository.save(split);
             }
         }
+    }
+    @Transactional
+    public void deleteExpense(Long expenseId) {
+
+        expenseSplitRepository.deleteByExpenseId(expenseId);
+
+        expenseRepository.deleteById(expenseId);
+    }
+    @Transactional
+    public ExpenseEntity updateExpense(Long expenseId, ExpenseEntity updatedExpense) {
+
+        ExpenseEntity expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new RuntimeException("Expense not found"));
+
+        expense.setAmount(updatedExpense.getAmount());
+        expense.setDescription(updatedExpense.getDescription());
+
+        return expenseRepository.save(expense);
     }
 }
