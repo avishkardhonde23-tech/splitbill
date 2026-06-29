@@ -4,11 +4,14 @@ import com.example.splitbill.dto.BalanceResponse;
 import com.example.splitbill.dto.SettleRequest;
 import com.example.splitbill.entity.ExpenseSplitEntity;
 import com.example.splitbill.service.ExpenseSplitService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Split API", description = "Expense split and settlement")
 @RestController
 @RequestMapping("/api/splits")
 @RequiredArgsConstructor
@@ -27,10 +30,13 @@ public class ExpenseSplitController {
 
         return service.getSplitsByExpense(expenseId);
     }
+
+    @Operation(summary = "Get balances of group")
     @GetMapping("/balance/{groupId}")
     public List<BalanceResponse> getBalances(@PathVariable Long groupId) {
         return service.getBalances(groupId);
     }
+    @Operation(summary = "Settle balance")
     @PostMapping("/settle")
     public String settle(@RequestBody SettleRequest request) {
 

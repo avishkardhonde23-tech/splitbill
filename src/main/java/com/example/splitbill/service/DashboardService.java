@@ -6,6 +6,7 @@ import com.example.splitbill.entity.ExpenseEntity;
 import com.example.splitbill.entity.GroupMember;
 import com.example.splitbill.repository.GroupMemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +25,10 @@ public class DashboardService {
         List<GroupMember> members =
                 groupMemberRepository.findByGroupId(groupId);
 
-        List<ExpenseEntity> expenses =
-                expenseService.getExpensesByGroup(groupId);
+        Page<ExpenseEntity> expensePage =
+                expenseService.getExpensesByGroup(groupId, 0, 100, "id");
+
+        List<ExpenseEntity> expenses = expensePage.getContent();
 
         List<BalanceResponse> balances =
                 expenseSplitService.getBalances(groupId);

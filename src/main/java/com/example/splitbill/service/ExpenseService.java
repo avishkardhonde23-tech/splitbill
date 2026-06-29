@@ -11,6 +11,10 @@ import com.example.splitbill.repository.ExpenseSplitRepository;
 import com.example.splitbill.repository.GroupMemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +27,8 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final ExpenseSplitRepository expenseSplitRepository;
-@Transactional
+
+    @Transactional
     public ExpenseEntity addExpense(ExpenseRequest request) {
         ExpenseEntity expense = new ExpenseEntity();
 
@@ -42,7 +47,7 @@ public class ExpenseService {
                 break;
 
             case EXACT:
-                splitExact(savedExpense,request.getSplits());
+                splitExact(savedExpense, request.getSplits());
                 break;
 
             case ITEM_WISE:
@@ -55,8 +60,20 @@ public class ExpenseService {
 
         return savedExpense;
     }
-    public List<ExpenseEntity> getExpensesByGroup(Long groupId){
-        return expenseRepository.findGroupById(groupId);
+
+    public Page<ExpenseEntity> getExpensesByGroup(
+            Long groupId,
+            int page,
+            int size,
+            String sortBy) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(sortBy).ascending()
+        );
+
+        return expenseRepository.findByGroupId(groupId, pageable);
     }
     private void splitEqual(ExpenseEntity expense) {
 
@@ -147,3 +164,4 @@ public class ExpenseService {
         return expenseRepository.save(expense);
     }
 }
+

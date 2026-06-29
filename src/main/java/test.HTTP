@@ -195,3 +195,6 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:8080/api/dashboard/1
+###
+http://localhost:8080/swagger-ui/index.html
+###
