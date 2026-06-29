@@ -193,3 +193,5 @@ Content-Type: application/json
   "amount": 5500,
   "description": "Goa Hotel Updated"
 }
+###
+GET http://localhost:8080/api/dashboard/1
