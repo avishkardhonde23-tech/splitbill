@@ -5,10 +5,9 @@ import com.example.splitbill.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Group API", description = "Manage expense groups")
 @RestController
@@ -23,5 +22,10 @@ public class GroupController {
             @RequestBody GroupEntity group) {
 
         return groupService.createGroup(group);
+    }
+    @GetMapping
+    @Operation(summary = "Get all groups")
+    public List<GroupEntity> getAllGroups() {
+        return groupService.getAllGroups();
     }
 }

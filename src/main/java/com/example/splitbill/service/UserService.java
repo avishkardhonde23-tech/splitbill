@@ -5,6 +5,8 @@ import com.example.splitbill.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -22,5 +24,8 @@ public class UserService {
         }
 
         return user;
+    }
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
     }
 }

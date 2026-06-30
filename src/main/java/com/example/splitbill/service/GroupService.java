@@ -5,6 +5,8 @@ import com.example.splitbill.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class GroupService {
@@ -12,5 +14,8 @@ public class GroupService {
     public GroupEntity createGroup(GroupEntity group){
 
         return groupRepository.save(group);
+    }
+    public List<GroupEntity> getAllGroups() {
+        return groupRepository.findAll();
     }
 }
