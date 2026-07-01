@@ -13,6 +13,7 @@ function logout() {
 // =======================
 const saveGroupBtn = document.getElementById("saveGroupBtn");
 const saveMemberBtn = document.getElementById("saveMemberBtn");
+const saveExpenseBtn = document.getElementById("saveExpenseBtn");
 
 if (saveGroupBtn) {
     saveGroupBtn.addEventListener("click", createGroup);
@@ -20,6 +21,11 @@ if (saveGroupBtn) {
 
 if (saveMemberBtn) {
     saveMemberBtn.addEventListener("click", addMember);
+}
+if (saveExpenseBtn) {
+
+    saveExpenseBtn.addEventListener("click", saveExpense);
+
 }
 
 async function createGroup() {
@@ -144,8 +150,6 @@ async function openAddMemberModal(groupId) {
 // INITIAL PAGE LOAD
 // =======================
 
-loadGroups();
-loadGroupDropdown();
 async function loadUsers() {
 
     const response = await fetch("/api/users");
@@ -153,6 +157,27 @@ async function loadUsers() {
     const users = await response.json();
 
     const dropdown = document.getElementById("memberDropdown");
+
+    dropdown.innerHTML = "";
+
+    users.forEach(user => {
+
+        dropdown.innerHTML += `
+            <option value="${user.id}">
+                ${user.name}
+            </option>
+        `;
+
+    });
+
+}
+async function loadPaidByDropdown() {
+
+    const response = await fetch("/api/users");
+
+    const users = await response.json();
+
+    const dropdown = document.getElementById("paidBy");
 
     dropdown.innerHTML = "";
 
@@ -207,3 +232,53 @@ async function addMember() {
     }
 
 }
+// =======================
+// SAVE EXPENSE
+// =======================
+async function saveExpense() {
+
+    const groupId = document.getElementById("expenseGroup").value;
+    const description = document.getElementById("expenseDescription").value;
+    const amount = document.getElementById("expenseAmount").value;
+    const paidBy = document.getElementById("paidBy").value;
+
+    const response = await fetch("/api/expenses", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            groupId: Number(groupId),
+            paidBy: Number(paidBy),
+            amount: Number(amount),
+            description: description,
+
+            splitType: "EQUAL"
+
+        })
+
+    });
+
+    if (response.ok) {
+
+        alert("Expense Added Successfully!");
+
+        bootstrap.Modal.getInstance(
+            document.getElementById("expenseModal")
+        ).hide();
+
+    } else {
+
+        const error = await response.text();
+        alert(error);
+
+    }
+
+}
+loadGroups();
+loadGroupDropdown();
+loadPaidByDropdown();
