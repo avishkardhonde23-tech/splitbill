@@ -1,11 +1,16 @@
 package com.example.splitbill.service;
 
 import com.example.splitbill.dto.BalanceResponse;
+import com.example.splitbill.dto.MemberBalanceResponse;
 import com.example.splitbill.dto.SettleRequest;
+import com.example.splitbill.entity.ExpenseEntity;
 import com.example.splitbill.entity.ExpenseSplitEntity;
 import com.example.splitbill.entity.GroupMember;
+import com.example.splitbill.entity.UserEntity;
+import com.example.splitbill.repository.ExpenseRepository;
 import com.example.splitbill.repository.ExpenseSplitRepository;
 import com.example.splitbill.repository.GroupMemberRepository;
+import com.example.splitbill.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +24,8 @@ import java.util.List;
 public class ExpenseSplitService {
     private final ExpenseSplitRepository repository;
     private final GroupMemberRepository groupMemberRepository;
-
+    private final ExpenseRepository expenseRepository;
+    private final UserRepository userRepository;
     public ExpenseSplitEntity saveSplit(
             ExpenseSplitEntity split){
 
@@ -78,5 +84,51 @@ public class ExpenseSplitService {
 
             repository.save(split);
         }
+    }
+    public List<MemberBalanceResponse> getMemberBalances(Long groupId) {
+
+        List<MemberBalanceResponse> balances = new ArrayList<>();
+
+        List<GroupMember> members =
+                groupMemberRepository.findByGroupId(groupId);
+
+        List<ExpenseEntity> expenses =
+                expenseRepository.findAllByGroupId(groupId);
+
+        double totalExpense = 0;
+
+        for (ExpenseEntity expense : expenses) {
+            totalExpense += expense.getAmount();
+        }
+        double sharePerPerson = totalExpense / members.size();
+        for (GroupMember member : members) {
+
+            double paid = 0;
+
+            for (ExpenseEntity expense : expenses) {
+
+                if (expense.getPaidBy().equals(member.getUserId())) {
+                    paid += expense.getAmount();
+                }
+
+            }
+
+            double balance = paid - sharePerPerson;
+
+            MemberBalanceResponse response = new MemberBalanceResponse();
+
+            UserEntity user = userRepository.findById(member.getUserId())
+                    .orElseThrow();
+
+            response.setMemberName(user.getName());
+            response.setPaid(paid);
+            response.setShare(sharePerPerson);
+            response.setBalance(balance);
+
+            balances.add(response);
+
+        }
+
+        return balances;
     }
 }

@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface ExpenseRepository extends JpaRepository<ExpenseEntity,Long> {
     Page<ExpenseEntity> findByGroupId(Long groupId, Pageable pageable);
+    List<ExpenseEntity> findAllByGroupId(Long groupId);
 }
