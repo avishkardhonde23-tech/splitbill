@@ -10,7 +10,7 @@ import java.util.List;
 public class DashboardResponse {
     private List<GroupMember> members;
 
-    private List<ExpenseEntity> expenses;
+    private List<ExpenseResponse> expenses;
 
     private List<BalanceResponse> balances;
 }

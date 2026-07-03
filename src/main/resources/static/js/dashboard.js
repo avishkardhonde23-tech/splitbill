@@ -14,6 +14,7 @@ function logout() {
 const saveGroupBtn = document.getElementById("saveGroupBtn");
 const saveMemberBtn = document.getElementById("saveMemberBtn");
 const saveExpenseBtn = document.getElementById("saveExpenseBtn");
+const updateExpenseBtn = document.getElementById("updateExpenseBtn");
 
 if (saveGroupBtn) {
     saveGroupBtn.addEventListener("click", createGroup);
@@ -25,7 +26,10 @@ if (saveMemberBtn) {
 if (saveExpenseBtn) {
 
     saveExpenseBtn.addEventListener("click", saveExpense);
+}
+if (updateExpenseBtn) {
 
+    updateExpenseBtn.addEventListener("click", updateExpense);
 }
 
 async function createGroup() {
@@ -127,7 +131,31 @@ async function loadGroupDropdown() {
     });
 
 }
+// =======================
+// LOAD VIEW GROUP DROPDOWN
+// =======================
 
+async function loadViewExpenseGroups() {
+
+    const response = await fetch("/api/groups");
+
+    const groups = await response.json();
+
+    const dropdown = document.getElementById("viewExpenseGroup");
+
+    dropdown.innerHTML = "";
+
+    groups.forEach(group => {
+
+        dropdown.innerHTML += `
+    <option value="${group.id}">
+        ${group.groupName}
+    </option>
+`;
+
+    });
+
+}
 // =======================
 // OPEN ADD MEMBER MODAL
 // =======================
@@ -279,6 +307,110 @@ async function saveExpense() {
     }
 
 }
+// =======================
+// LOAD EXPENSES
+// =======================
+
+async function loadExpenses() {
+
+    const groupId = document.getElementById("viewExpenseGroup").value;
+    console.log("Group ID =", groupId);
+    console.log(`/api/expenses/group/${groupId}`);
+
+    const response = await fetch(
+        `/api/expenses/group/${groupId}?t=${new Date().getTime()}`
+    );
+
+    const page = await response.json();
+
+    console.log(page);
+
+    const tbody = document.getElementById("expenseTableBody");
+
+    tbody.innerHTML = "";
+
+    page.content.forEach(expense => {
+
+        tbody.innerHTML += `
+<tr>
+    <td>${expense.description}</td>
+    <td>${expense.amount}</td>
+    <td>${expense.paidBy}</td>
+
+    <td>
+        <button
+            class="btn btn-sm btn-warning"
+            onclick="openEditExpense(${expense.id},
+                                     '${expense.description}',
+                                     ${expense.amount})">
+            Edit
+        </button>
+    </td>
+
+</tr>
+`;
+
+    });
+
+}
+function openEditExpense(id, description, amount) {
+
+    document.getElementById("editExpenseId").value = id;
+
+    document.getElementById("editDescription").value = description;
+
+    document.getElementById("editAmount").value = amount;
+
+    const modal = new bootstrap.Modal(
+        document.getElementById("editExpenseModal")
+    );
+
+    modal.show();
+
+}
+async function updateExpense() {
+
+    const expenseId = document.getElementById("editExpenseId").value;
+
+    const description = document.getElementById("editDescription").value;
+
+    const amount = document.getElementById("editAmount").value;
+
+    const response = await fetch(`/api/expenses/${expenseId}`, {
+
+        method: "PUT",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            description: description,
+            amount: Number(amount)
+
+        })
+
+    });
+
+    if (response.ok) {
+
+        alert("Expense Updated Successfully!");
+
+        bootstrap.Modal.getInstance(
+            document.getElementById("editExpenseModal")
+        ).hide();
+
+        await loadExpenses();
+
+    } else {
+
+        alert("Failed to update expense.");
+
+    }
+
+}
 loadGroups();
 loadGroupDropdown();
+loadViewExpenseGroups();
 loadPaidByDropdown();

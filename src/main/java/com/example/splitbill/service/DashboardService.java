@@ -2,6 +2,7 @@ package com.example.splitbill.service;
 
 import com.example.splitbill.dto.BalanceResponse;
 import com.example.splitbill.dto.DashboardResponse;
+import com.example.splitbill.dto.ExpenseResponse;
 import com.example.splitbill.entity.ExpenseEntity;
 import com.example.splitbill.entity.GroupMember;
 import com.example.splitbill.repository.GroupMemberRepository;
@@ -25,10 +26,10 @@ public class DashboardService {
         List<GroupMember> members =
                 groupMemberRepository.findByGroupId(groupId);
 
-        Page<ExpenseEntity> expensePage =
+        Page<ExpenseResponse> expensePage =
                 expenseService.getExpensesByGroup(groupId, 0, 100, "id");
 
-        List<ExpenseEntity> expenses = expensePage.getContent();
+        List<ExpenseResponse> expenses = expensePage.getContent();
 
         List<BalanceResponse> balances =
                 expenseSplitService.getBalances(groupId);

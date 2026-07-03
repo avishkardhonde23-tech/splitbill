@@ -1,6 +1,7 @@
 package com.example.splitbill.controller;
 
 import com.example.splitbill.dto.ExpenseRequest;
+import com.example.splitbill.dto.ExpenseResponse;
 import com.example.splitbill.entity.ExpenseEntity;
 import com.example.splitbill.service.ExpenseService;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ public class ExpenseController {
     }
     @Operation(summary = "Get all expenses of a group")
     @GetMapping("/group/{groupId}")
-    public Page<ExpenseEntity> getExpensesByGroup(
+    public Page<ExpenseResponse> getExpensesByGroup(
             @PathVariable Long groupId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,

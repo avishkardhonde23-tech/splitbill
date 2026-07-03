@@ -1,6 +1,7 @@
 package com.example.splitbill.service;
 
 import com.example.splitbill.dto.ExpenseRequest;
+import com.example.splitbill.dto.ExpenseResponse;
 import com.example.splitbill.dto.ItemRequest;
 import com.example.splitbill.dto.SplitRequest;
 import com.example.splitbill.entity.ExpenseEntity;
@@ -16,7 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
+import com.example.splitbill.repository.UserRepository;
 import java.util.List;
 
 import static com.example.splitbill.enums.SplitType.*;
@@ -27,6 +28,7 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final ExpenseSplitRepository expenseSplitRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public ExpenseEntity addExpense(ExpenseRequest request) {
@@ -61,7 +63,7 @@ public class ExpenseService {
         return savedExpense;
     }
 
-    public Page<ExpenseEntity> getExpensesByGroup(
+    public Page<ExpenseResponse> getExpensesByGroup(
             Long groupId,
             int page,
             int size,
@@ -73,7 +75,9 @@ public class ExpenseService {
                 Sort.by(sortBy).ascending()
         );
 
-        return expenseRepository.findByGroupId(groupId, pageable);
+        return expenseRepository
+                .findByGroupId(groupId, pageable)
+                .map(this::convertToResponse);
     }
     private void splitEqual(ExpenseEntity expense) {
 
@@ -162,6 +166,23 @@ public class ExpenseService {
         expense.setDescription(updatedExpense.getDescription());
 
         return expenseRepository.save(expense);
+    }
+    private ExpenseResponse convertToResponse(ExpenseEntity expense) {
+
+        ExpenseResponse response = new ExpenseResponse();
+
+        response.setId(expense.getId());
+        response.setDescription(expense.getDescription());
+        response.setAmount(expense.getAmount());
+
+        String userName = userRepository
+                .findById(expense.getPaidBy())
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getName();
+
+        response.setPaidBy(userName);
+
+        return response;
     }
 }
 

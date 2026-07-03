@@ -68,7 +68,11 @@
 
                 <div class="col-md-6">
 
-                    <button class="btn btn-warning w-100">
+                    <button
+                            class="btn btn-warning w-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#viewExpenseModal"
+                            onclick="loadExpenses()">
                         View Expenses
                     </button>
 
@@ -192,6 +196,120 @@
                         id="saveExpenseBtn"
                         class="btn btn-success">
                     Save Expense
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- View Expenses Modal -->
+<div class="modal fade" id="viewExpenseModal" tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Expenses
+                </h5>
+
+                <button
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+                <select id="viewExpenseGroup"
+                        class="form-select mb-3">
+                </select>
+
+                <table class="table table-bordered">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Paid By</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                    </thead>
+
+                    <tbody id="expenseTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Edit Expense Modal -->
+<div class="modal fade" id="editExpenseModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Edit Expense
+                </h5>
+
+                <button
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input
+                        type="hidden"
+                        id="editExpenseId">
+
+                <input
+                        type="text"
+                        id="editDescription"
+                        class="form-control mb-3"
+                        placeholder="Description">
+
+                <input
+                        type="number"
+                        id="editAmount"
+                        class="form-control"
+                        placeholder="Amount">
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                <button
+                        id="updateExpenseBtn"
+                        class="btn btn-warning">
+                    Update Expense
                 </button>
 
             </div>
