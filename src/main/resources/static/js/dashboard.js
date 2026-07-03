@@ -345,6 +345,12 @@ async function loadExpenses() {
                                      ${expense.amount})">
             Edit
         </button>
+        
+         <button
+        class="btn btn-sm btn-danger"
+        onclick="deleteExpense(${expense.id})">
+        Delete
+    </button>
     </td>
 
 </tr>
@@ -406,6 +412,33 @@ async function updateExpense() {
     } else {
 
         alert("Failed to update expense.");
+
+    }
+
+}
+async function deleteExpense(expenseId) {
+
+    const confirmDelete = confirm("Are you sure you want to delete this expense?");
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    const response = await fetch(`/api/expenses/${expenseId}`, {
+
+        method: "DELETE"
+
+    });
+
+    if (response.ok) {
+
+        alert("Expense Deleted Successfully!");
+
+        await loadExpenses();
+
+    } else {
+
+        alert("Failed to delete expense.");
 
     }
 
