@@ -483,12 +483,97 @@ async function loadBalances() {
                 <td>₹${balance.paid}</td>
                 <td>₹${balance.share}</td>
                 <td>₹${balance.balance}</td>
+                   <td>
+                <button
+                    class="btn btn-success btn-sm"
+                    onclick="openSettleModal('${balance.memberName}', ${balance.balance})">
+                    Settle
+                </button>
+            </td>
             </tr>
         `;
 
     });
 
 }
+async function openSettleModal(memberName, balance) {
+
+    const users = await fetch("/api/users");
+    const userList = await users.json();
+
+    const fromUser = document.getElementById("fromUser");
+    const toUser = document.getElementById("toUser");
+
+    fromUser.innerHTML = "";
+    toUser.innerHTML = "";
+
+    userList.forEach(user => {
+
+        fromUser.innerHTML += `
+            <option value="${user.id}">
+                ${user.name}
+            </option>
+        `;
+
+        toUser.innerHTML += `
+            <option value="${user.id}">
+                ${user.name}
+            </option>
+        `;
+    });
+
+    // Select the member passed from the Balance table
+    const member = userList.find(u => u.name === memberName);
+
+    if (member) {
+        fromUser.value = member.id;
+    }
+
+    // Default receiver = first different user
+    const receiver = userList.find(u => u.id != fromUser.value);
+
+    if (receiver) {
+        toUser.value = receiver.id;
+    }
+
+    document.getElementById("settleAmount").value = Math.abs(balance);
+
+    new bootstrap.Modal(
+        document.getElementById("settleModal")
+    ).show();
+}
+document.getElementById("settleBtn").addEventListener("click", async () => {
+
+    const request = {
+        fromUserId: Number(document.getElementById("fromUser").value),
+        toUserId: Number(document.getElementById("toUser").value),
+        amount: Number(document.getElementById("settleAmount").value)
+    };
+
+    const response = await fetch("/api/splits/settle", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(request)
+    });
+
+    if (response.ok) {
+
+        alert("Settlement Successful");
+
+        bootstrap.Modal.getInstance(
+            document.getElementById("settleModal")
+        ).hide();
+
+        loadBalances();
+
+    } else {
+
+        alert(await response.text());
+
+    }
+});
 loadGroups();
 loadGroupDropdown();
 loadViewExpenseGroups();

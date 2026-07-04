@@ -13,5 +13,9 @@ public class PageController {
     public String dashboard() {
         return "dashboard";
     }
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
 
 }
