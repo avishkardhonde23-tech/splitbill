@@ -80,8 +80,14 @@
 
                 <div class="col-md-6">
 
-                    <button class="btn btn-info w-100">
+                    <button
+                            class="btn btn-info w-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#balanceModal"
+                            onclick="loadBalanceGroups()">
+
                         View Balances
+
                     </button>
 
                 </div>
@@ -351,6 +357,44 @@
                         class="btn btn-primary">
                     Add Member
                 </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="balanceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Group Balances</h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <select id="balanceGroup" class="form-select mb-3"></select>
+
+                <button class="btn btn-primary mb-3"
+                        onclick="loadBalances()">
+                    Load Balances
+                </button>
+
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Paid</th>
+                        <th>Share</th>
+                        <th>Balance</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="balanceTableBody"></tbody>
+
+                </table>
 
             </div>
 

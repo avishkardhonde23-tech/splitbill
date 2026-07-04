@@ -118,7 +118,11 @@ public class ExpenseSplitService {
             MemberBalanceResponse response = new MemberBalanceResponse();
 
             UserEntity user = userRepository.findById(member.getUserId())
-                    .orElseThrow();
+                    .orElse(null);
+
+            if (user == null) {
+                continue;
+            }
 
             response.setMemberName(user.getName());
             response.setPaid(paid);

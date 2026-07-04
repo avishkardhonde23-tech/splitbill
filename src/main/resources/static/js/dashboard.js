@@ -443,6 +443,52 @@ async function deleteExpense(expenseId) {
     }
 
 }
+async function loadBalanceGroups() {
+
+    const response = await fetch("/api/groups");
+    const groups = await response.json();
+
+    const dropdown = document.getElementById("balanceGroup");
+
+    dropdown.innerHTML = "";
+
+    groups.forEach(group => {
+
+        dropdown.innerHTML += `
+            <option value="${group.id}">
+                ${group.groupName}
+            </option>
+        `;
+
+    });
+
+}
+async function loadBalances() {
+
+    const groupId = document.getElementById("balanceGroup").value;
+
+    const response = await fetch(`/api/splits/balances/${groupId}`);
+
+    const balances = await response.json();
+
+    const tbody = document.getElementById("balanceTableBody");
+
+    tbody.innerHTML = "";
+
+    balances.forEach(balance => {
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${balance.memberName}</td>
+                <td>₹${balance.paid}</td>
+                <td>₹${balance.share}</td>
+                <td>₹${balance.balance}</td>
+            </tr>
+        `;
+
+    });
+
+}
 loadGroups();
 loadGroupDropdown();
 loadViewExpenseGroups();
