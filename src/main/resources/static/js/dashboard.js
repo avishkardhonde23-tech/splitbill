@@ -299,7 +299,15 @@ async function saveExpense() {
             document.getElementById("expenseModal")
         ).hide();
 
-    } else {
+        await loadViewExpenseGroups();
+
+        document.getElementById("viewExpenseGroup").value = groupId;
+
+        await loadExpenses();
+
+    }
+
+     else {
 
         const error = await response.text();
         alert(error);
@@ -567,6 +575,13 @@ document.getElementById("settleBtn").addEventListener("click", async () => {
 
     }
 });
+async function openViewExpenseModal() {
+
+    await loadViewExpenseGroups();
+
+    await loadExpenses();
+
+}
 loadGroups();
 loadGroupDropdown();
 loadViewExpenseGroups();
