@@ -483,13 +483,6 @@ async function loadBalances() {
                 <td>₹${balance.paid}</td>
                 <td>₹${balance.share}</td>
                 <td>₹${balance.balance}</td>
-                   <td>
-                <button
-                    class="btn btn-success btn-sm"
-                    onclick="openSettleModal('${balance.memberName}', ${balance.balance})">
-                    Settle
-                </button>
-            </td>
             </tr>
         `;
 
