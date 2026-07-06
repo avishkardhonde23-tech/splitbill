@@ -26,14 +26,17 @@ public class ExpenseSplitService {
     private final GroupMemberRepository groupMemberRepository;
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
+
     public ExpenseSplitEntity saveSplit(
-            ExpenseSplitEntity split){
+            ExpenseSplitEntity split) {
 
         return repository.save(split);
     }
+
     public List<ExpenseSplitEntity> getSplitsByExpense(Long expenseId) {
         return repository.findByExpenseId(expenseId);
     }
+
     public List<BalanceResponse> getBalances(Long groupId) {
 
         List<GroupMember> members = groupMemberRepository.findByGroupId(groupId);
@@ -59,6 +62,7 @@ public class ExpenseSplitService {
 
         return balances;
     }
+
     @Transactional
     public void settle(SettleRequest request) {
 
@@ -85,6 +89,7 @@ public class ExpenseSplitService {
             repository.save(split);
         }
     }
+
     public List<MemberBalanceResponse> getMemberBalances(Long groupId) {
 
         List<MemberBalanceResponse> balances = new ArrayList<>();
@@ -95,42 +100,71 @@ public class ExpenseSplitService {
         List<ExpenseEntity> expenses =
                 expenseRepository.findAllByGroupId(groupId);
 
-        double totalExpense = 0;
-
-        for (ExpenseEntity expense : expenses) {
-            totalExpense += expense.getAmount();
-        }
-        double sharePerPerson = totalExpense / members.size();
         for (GroupMember member : members) {
 
             double paid = 0;
 
+            // Total amount paid by this member
             for (ExpenseEntity expense : expenses) {
 
                 if (expense.getPaidBy().equals(member.getUserId())) {
                     paid += expense.getAmount();
                 }
-
             }
 
-            double balance = paid - sharePerPerson;
+            // Remaining amount this member still owes
+            List<ExpenseSplitEntity> splits =
+                    repository.findByUserId(member.getUserId());
+            System.out.println("User ID: " + member.getUserId());
+            System.out.println("Splits found: " + splits.size());
 
-            MemberBalanceResponse response = new MemberBalanceResponse();
+            for (ExpenseSplitEntity split : splits) {
+                System.out.println(
+                        "Expense: " + split.getExpenseId() +
+                                " User: " + split.getUserId() +
+                                " Owed: " + split.getAmountOwed()
+                );
+            }
 
-            UserEntity user = userRepository.findById(member.getUserId())
-                    .orElse(null);
+            double remainingOwed = 0;
+            double originalShare = 0;
+
+            for (ExpenseSplitEntity split : splits) {
+
+                remainingOwed += split.getAmountOwed();
+
+                ExpenseEntity expense =
+                        expenseRepository.findById(split.getExpenseId()).orElse(null);
+
+                if (expense != null) {
+
+                    List<GroupMember> groupMembers =
+                            groupMemberRepository.findByGroupId(expense.getGroupId());
+
+                    originalShare += expense.getAmount() / groupMembers.size();
+                }
+            }
+
+            double balance = paid - remainingOwed;
+
+            UserEntity user =
+                    userRepository.findById(member.getUserId()).orElse(null);
 
             if (user == null) {
                 continue;
             }
 
+            MemberBalanceResponse response = new MemberBalanceResponse();
+
             response.setMemberName(user.getName());
             response.setPaid(paid);
-            response.setShare(sharePerPerson);
+
+            // show remaining share instead of original share
+            response.setShare(originalShare);
+
             response.setBalance(balance);
 
             balances.add(response);
-
         }
 
         return balances;
